@@ -1,0 +1,1 @@
+REM cudaminer/cudaminer.exe -d 0 -l auto -i 1 --single-memory 1 --texture-cache 1 -o stratum+tcp://middlecoin.com:3333 -O 15vaHxRMkPbjgtTMKum6jeYBnMo1SCzGoz:x
