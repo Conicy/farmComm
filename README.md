@@ -9,9 +9,9 @@ THIS TOOLSET!
 
 (These hands are now YOUR hands!)
 
-(Problems this solution does not solve: running processes with access to graphics cards (an "active" session) when users are logged out, but the computer is on. Examine BitMoose as a possible means to solve that problem (I was halfway through coding farmComm when I discovered BitMoose, and at this writing I do not actually know whether I have tried to solve many of the problems it may have already solved).
+(Problems this solution does not solve: running processes with access to graphics cards (an "active" session) when users are logged out, but the computer is on. Examine BitMoose as a possible means to solve that problem (I was halfway through coding farmComm when I discovered BitMoose, and at this writing I do not actually know whether I have tried to solve many of the problems which BitMoose may have already solved).
 
-farmComm description: Spawns arbitrary, configurable processes, partly hidden, when any user is idle for 8.5 minutes (default). Terminates those processes when user resumes activity. (Planned: an option to briefly suspend the processes if the idle interrupt is brief.) User must be logged in. Terminates and re-spawns those processes on user switch (to always run the processes in the active session). Default installation runs processes in the secure desktop (session 0), so that processes respond to user activity/inactivity even when the workstation is locked (this would not happen otherwise).
+farmComm description: Spawns arbitrary, configurable processes, partly hidden, when any user is idle for 8.5 minutes (default). Terminates those processes when user resumes activity. (Planned: an option to briefly suspend the processes if the idle interrupt is brief.) User must be logged in. Terminates and re-spawns those processes on user switch (to always run the processes in the active session, and therefore maintain access to the graphics hardware--which in Windows 7, becomes unavailable to processes when users disconnect). Default installation runs processes in the secure desktop (session 0, which *does* have continuous access to graphics hardware), so that processes respond to user activity/inactivity even when the workstation is locked.
 
 Built with AutoHotkey_L, designed for Windows 7.
 
@@ -22,9 +22,9 @@ Contact: artdev@inboxalias.com
 
 DISCLAIMER: While I have tested this sufficiently that I believe it works, it is not guaranteed to be fit for any purpose, and it may cause several people to dislike you. Actually, the abuse of this toolset could *really* get you in trouble.
 
-This was designed with process possibilities in mind such as 3D render farm slave node executables and/or services (hence the "farm" in this project's title, for "render farm,") or fractal flame ("electric sheep"-like image) renderers, and cryptocurrency miners. But it could be used to spawn/terminate essentially anything on user inactivity/activity.
+Useful for objectives like managing 3D render farm slave node tasks (please add another noun to that phrase, just for good measure!), fractal flame renderers, or cryptocurrency miners. However, it can be used to spawn and terminate essentially anything on user inactivity/activity.
 
-What is meant by processes spawned as "partly hidden" is that while they will run and function normally (other than any functionality which *requires* user interaction), their user interfaces do not appear (or in the case of console applications, the console host window does not appear). However, they will still ordinarily be detectable and visible in Windows Task Manager.
+What is meant by processes spawned as "partly hidden" is that while they run and function normally (other than any functionality which *requires* user interaction), their user interfaces do not appear--not anywhere. However, they will still be ordinarily detectable, for example they will be listed in the Windows Task Manager.
 
 =v0.9.7 INITIAL RELEASE 2013-07-31 TOO FREAKING EARLY IN THE MORNING=
 
@@ -37,17 +37,17 @@ Novacoin:		4Z123Y8QZXPVvfA7LVDySunJoEG2dnUHFV
 
 ==INSTALLATION AND USE==
 
-Navigate to the /setup folder, launch an elavated (or *maybe* mereley administrative) command prompt thereto, and run INSTALL.bat. Follow the configuration details given here and see if it works. If it doesn't work, INSTALL.bat per the comments therein to try for a "USER" (instead of "SYSTEM") install. If that doesn't work either, cry, because you are not evil and/or lucky enough. Drop me a line and tell me your woes. I won't give you any pity, but at least you'll get to indulge in self-pity.
+Navigate to the /setup folder, launch an elavated (or *maybe* mereley administrative) command prompt thereto, and run INSTALL.bat. Follow the configuration details given here and see if it works. If it doesn't work, alter INSTALL.bat per the comments therein to try for a "USER" (instead of "SYSTEM") install. If that doesn't work either, cry, because you are not evil and/or lucky enough. Drop me a line and tell me your woes. I won't give you any pity, but at least you'll get to indulge in self-pity.
 
-A SYSTEM setup runs this tools' processes in session 0 (unfortunately, only if a user is logged in), so they will spawn and terminate even when the computer is locked (or on the secure desktop, but again, only if a user is logged in). systemSpawn.exe and the processes it launches achieve this. A USER setup accomplishes much the same, by launching spawn.exe at user login (whereas a SYSTEM setup launches systemSpawn.exe), but spawn.exe doesn't run in session 0, it runs in the user session, and therefore cannot respond to user activity when the computer is locked.
+A SYSTEM setup runs this toolset's processes in session 0, so they will spawn and terminate even when the computer is locked (because the lock screen is in session 0), but again only if the user is logged in (with thier session locked *or* unlocked). This is achieved via systemSpawn.exe, and the processes it launches. A USER setup accomplishes much the same, by instead launching spawn.exe at user login, but spawn.exe doesn't run in session 0, it runs in the user session, and therefore cannot respond to user activity when the computer is locked.
 
 Whichever setup you use, create these folders in Windows:
 
 C:\farm\Local
 
--- and copy this extracted farmComm distribution to that folder (so that it has the path C:\farm\Local\farmComm, and you prefer to install to another directory, I'll later explain how.) Note the miners.7z archive therien (meta!) which you must extract with a free program you must go through the pain of downloading if you don't already use it but why on earth aren't you using it, it's superior to the winzip library, 7-zip (free from 7-zip.org). Place executables you wish to spawn at user inactivity under subfolders of this main distribution, for example farmComm\cpuminer\minerd.exe (with all of the other files that executable depends on--just such a preconfigured ;) example is provided in miners.7z). Then write the command(s) to start your custom executable(s) into localComm\COMM1.txt, etc. (note also the preconfigured examples provided therein--only three commands are supported at this writing).
+-- and copy this extracted farmComm distribution to that folder (so that it has the path C:\farm\Local\farmComm, and if you prefer to install to another directory, I'll later explain how.) Note the miners.7z archive therein (meta!), which you must extract with a free program you must go through the pain of downloading if you don't already use it but why on earth aren't you using it, it's superior to the winzip library, 7-zip (free from 7-zip.org). Place executables you wish to spawn at user inactivity under sub-folders of this main distribution, for example farmComm\cpuminer\minerd.exe (with all of the other files that executable depends on. Just such a preconfigured ;) example is provided in miners.7z). Then write the command(s) to start your custom executable(s) into localComm\COMM1.txt, etc. (note also the preconfigured examples provided therein--only three commands are supported at this writing).
 
-Lastly, be sure to write the image name (without the .exe extension) of each executable you wrote in the COMM~.txt files--write those image names in processSpawnList.txt, one image per line. See again the defaults provided therien for examples. NOTE: If you do not do this, these processes will not terminate upon user activity resuming from idle!
+Lastly, be sure to write the image name (without the .exe extension) of each executable you wrote in the COMM~.txt files--write those image names in processSpawnList.txt, one image per line. See again the defaults provided therein for examples. NOTE: If you do not do this, these processes will not terminate upon user activity resuming from idle!
 
 To check whether your configuration will properly run, assuming it is a resource-hungry application (e.g. it uses a lot of CPU and/or GPU power), first run a resource monitor tool like Open Hardware Monitor, and then run runProc.exe, and see if hardware (for example CPU) activity spikes as a result. You should also see your custom configured process(es) running, or listed in, Windows Task Manager (you can get to that via CTRL+ALT+DEL).
 
@@ -73,6 +73,8 @@ http://www.poweradmin.com/paexec/
 http://retired.beyondlogic.org/consulting/processutil/processutil.htm
 
 ==TO DO:==
+
+URGENT BUGFIX: Instead of having spawn.exe (or) systemSpawn.exe launch both spawnCheck and killCheck, have spawnCheck periodically check for the existence of the killCheck process, suspend its own functionality if that process is not found, attempt to launch the process any time it is not found, and resume its own functionality when that process if found. (LONG-TERM OBJECTIVE, BETTER SOLUTION; wrap all this functionality into one program, so that multiple executables do not need to be managed (wherever possible). With my first try at that, I couldn't seem to get simultaneous timers (and dependent functions) running properly in different threads). Otherwise, if spawnCheck.exe runs alone, it can spawn processes while the user is active, which it *should not.*
 
 Add configurable CPU/GPU load check functionality, for example do not spawn processes if the CPU and/or GPU load (from other processes?) are over fifteen percent. Possibly see the source code for how Open Hardware Monitor checks loads as a start point for this.
 
