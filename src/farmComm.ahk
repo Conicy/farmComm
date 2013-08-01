@@ -1,7 +1,6 @@
 ﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
-; #Warn  ; Enable warnings to assist with detecting common errors.
-SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+#NoTrayIcon
+SetWorkingDir %A_ScriptDir%
 #Persistent
 
 ;========= SET GLOBALS
@@ -15,11 +14,10 @@ KILLEDPROC = 0
 KILLEDPROC = %KILLEDPROC%
 ; User must be idle for 8.5 minutes (510,000 milliseconds) for this script to spawn processes.
 IdleTimeout = 510000
-; FOR TESTING ONLY:
-;IdleTimeout = 3500
+	; FOR TESTING ONLY:
+	;IdleTimeout = 3500
 
 ;========= MAIN EXECUTION
-IdleTimeout = 4000
 SetTimer, IdleTimeoutCheck, 12000
 SetTimer, ResumeFromIdleCheck, 1275
 if (%PROCSPAWN% == 1)	{
@@ -35,7 +33,7 @@ return
 IdleTimeoutCheck:
 if (A_TimeIdlePhysical > IdleTimeout)	{
 	if (%PROCSPAWN% == 0)			{
-			;MsgBox, 0, IDLE!, User idle past limit. Supposedly no process spawned. Will spawn. A_TimeIdlePhysical is %A_TimeIdlePhysical%., 6
+			;MsgBox, 0, IDLE!, User idle past limit. Supposedly no process spawned. Will spawn. A_TimeIdlePhysical is %A_TimeIdlePhysical%. IdleTimeout is %IdleTimeout%., 6
 		; RESET VARIABLES UPON WHICH TIMERS DEPEND
 		PROCSPAWN = 1
 		PROCSPAWN = %PROCSPAWN%

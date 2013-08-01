@@ -3,7 +3,7 @@
 SetWorkingDir %A_ScriptDir%
 
 ;COMMENT OUT the following in testing, uncomment it in production.
-;Sleep, 90000
+Sleep, 5000
 
 Run, %A_WorkingDir%\PaExec.exe -s -x -d -i 0 %A_WorkingDir%\farmComm.exe, %A_WorkingDir%, hide UseErrorLevel, farmCommProcessID
 Sleep, 3500
