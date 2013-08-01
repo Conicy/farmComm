@@ -35,7 +35,7 @@ return
 IdleTimeoutCheck:
 if (A_TimeIdlePhysical > IdleTimeout)	{
 	if (%PROCSPAWN% == 0)			{
-			MsgBox, 0, IDLE!, User idle past limit. Supposedly no process spawned. Will spawn. A_TimeIdlePhysical is %A_TimeIdlePhysical%., 6
+			;MsgBox, 0, IDLE!, User idle past limit. Supposedly no process spawned. Will spawn. A_TimeIdlePhysical is %A_TimeIdlePhysical%., 6
 		; RESET VARIABLES UPON WHICH TIMERS DEPEND
 		PROCSPAWN = 1
 		PROCSPAWN = %PROCSPAWN%
@@ -98,7 +98,7 @@ return
 ResumeFromIdleCheck:
 if (A_TimeIdlePhysical < 3000)	{
 	if (%KILLEDPROC% == 0)	{
-			MsgBox, 0, RESUME!, User active past limit. Any spawned process have not been killed. Will check for and kill processes. A_TimeIdlePhysical is %A_TimeIdlePhysical%., 6
+			;MsgBox, 0, RESUME!, User active past limit. Any spawned process have not been killed. Will check for and kill processes. A_TimeIdlePhysical is %A_TimeIdlePhysical%., 6
 		PROCSPAWN = 0
 		PROCSPAWN = %PROCSPAWN%
 		KILLEDPROC = 1
