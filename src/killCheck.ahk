@@ -6,9 +6,9 @@ Sleep, 1275
 
 KILLCHECK:
 
-If (A_TimeIdlePhysical < 3000)	{
+if (A_TimeIdlePhysical < 3000)	{
 	;This block is activated only if the user is NOT idle for 3 seconds.
-	;Check for and terminate processes of concern.
+	;Check for and terminate our exec.
 	Loop
 	{
 		FileReadLine, line, %A_WorkingDir%\processSpawnList.txt, %A_Index%
