@@ -1,11 +1,9 @@
 farmComm
 ========
 
-PROBLEM:
-Petahashes or more of potential computational power lie dormant in the world, even an extremely tiny fraction of which power could be put to evil and greedy purposes, in the right hands.
+PROBLEM: Petahashes or more of potential computational power lie dormant in the world, even an extremely tiny fraction of which power could be put to evil and greedy purposes, in the right hands.
 
-SOLUTION:
-THIS TOOLSET!
+SOLUTION: THIS TOOLSET!
 
 (These hands are now YOUR hands!)
 
@@ -88,9 +86,22 @@ Possibly optionally run a resource monitor in session zero to behold how enslave
 
 Possibly many other things.
 
+=RELEASE HISTORY=
+
+In reverse chronological order:
+
+v0.9.0.1 bug fix
+
+Spawn.exe--was still coded to kill processes via killSpawns.exe, notwithstanding killSpawns.exe no longer exists, as its functionality was rolled into killCheck.exe. Updated spawn.exe to fix.
+
+v0.9 INITIAL RELEASE
+
+First general release.
+
 =DEVELOPER NOTES=
 
 ==COMPILATION==
+
 AutoHotkey_L must be installed on your system to compile the .ahk source scripts under the \src folder. Run call-ahkrip.bat in that folder, to compile every .ahk script in that directory to an .exe file. This batch will also move the resultant executables to the intended target folder, ..\.
 
 The idle timout (span of time of user inactivity before processes are launched) is hard-coded near the top of spawnCheck.ahk; the variable is IdleTimeout. It represent milliseconds, so 1000 would be one millisecond. I've set it to 510000 (8.5 minutes) for production; for testing you may want a shorter wait ;) like 3500.
@@ -98,6 +109,7 @@ The idle timout (span of time of user inactivity before processes are launched) 
 The icon file was created (or can be recreated) via the AHK script and image in src/iconConverter. Note that ahkrip.bat is the place where this is configured to be used when compiling to .exe files.
 
 ==HOW IT WORKS==
+
 systemSpawn.exe, intended to launch at user logon, launches two processes, killCheck.exe and spawnCheck.exe, into the secure desktop as SYSTEM (this is accomplished through PaExec.exe). killCheck continuously checks if the user has been active in any three second period. If the user is active, it checks for and terminates any of the processes listed in processSpawnList.txt. spawnCheck continuously checks if the user has been idle for more than a time period (default is 8.5 minutes). If the user is idle, it calls runProc.exe, which reads launches the processes specified (and configurable) in localComm\COMM1.txt, COMM2.txt, and COMM3.txt. Thus, between killCheck and spawnCheck, the executables given in the COMM~.txt and ~list.txt will be executed at user idle, and terminated at user activity. (Note also that at first launch, systemSpawn calls killSpawns).
 
 A USER install achieves the same by instead executing spawn.exe at user login. At first launch, spawn.exe writes the pseudo-username SecretNinja5603 to user.txt, and checks for and terminates any running processes listed in ~list.txt. Thereafter, it periodically checks if it is running in an active session, and also reads the username written in user.txt. At any time the name in user.txt does not match the username under which spawn.exe runs, it writes the username (of the user under which it runs) to user.txt, and launches killCheck and spawnCheck, which perform the work already described. user.txt therefore functions as a file that effectively says "This user last spawned the processes listed in \localComm\COMM1-3.txt, from an active session." Because it does this, if in its periodic checks of user.txt it finds a match (user.txt lists the same user who last spawned tasks), it can do nothing (and indeed in this condition it does nothing), and it therefore avoids duplicate spawns of the processes. On the other hand (as described), at any time it is "aware" that it is in an active session, and did not last spawn any processes, it will terminate those processes, and start the cycle over again to check for thier execution.
@@ -107,4 +119,5 @@ Because the functionality of checking whether it runs under an active session is
 At this writing, a limitation of the localComm\COMM1-3.txt files is that they must reference executables only (and possibly exactly) one subfolder deep. Place subfolders containing whatever executables you wish to run at user activity under the main folder (farmComm), with all their dependencies, and write the commands to execute them (prefixed with the subfolder path\) in the COMM1-3.txt files (again, see the defaults given in those files with this distribution for examples).
 
 ==OTHER NOTES==
+
 I have no idea why this is so, but depending on the version of PaExec used, certain commands these executables rely on must be executed differently in order to work as hoped. PaExec 1.1 will only interact with the Secure Deskstop (session 0) if you explicitly tell it to, using the argument -d 0. However, PaExec v1.1, it seems will *not* honor that parameter (is this a bug??), yet, if you omit the -d 0 parameter, it properly interacts with the Secure Desktop (by default, I guess)! At this writing, this project relies on and uses PaExec v1.2, without using the -d 0 parameter in said setting.

@@ -2,11 +2,11 @@
 #NoTrayIcon
 SetWorkingDir %A_ScriptDir%
 
-;KILL ALL PROCESSES OF CONCERN AT INITIAL LAUNCH, AND ALSO PROCESSES THAT CONTROL THEM:
+;KILL ALL our exec. AT INITIAL LAUNCH, AND ALSO PROCESSES THAT CONTROL THEM:
 ;NOTE: THE FOLLOWING TWO LINES SHOULD ONLY BE COMMENTED OUT FOR TESTING OF PROPER FUNCTIONALITY WHEN THE ACTIVE SESSION CHANGES (WHEN USERS CHANGE).
 Run, %A_WorkingDir%\killControllerProcesses.exe, %A_WorkingDir%, hide UseErrorLevel, killSpawnsProcessID
 Sleep, 1250
-Run, %A_WorkingDir%\killSpawns.exe, %A_WorkingDir%, hide UseErrorLevel, killSpawnsProcessID
+Run, %A_WorkingDir%\killCheck.exe, %A_WorkingDir%, hide UseErrorLevel, killCheckProcessID
 Sleep, 7000
 
 ;=====GLOBALS
@@ -32,31 +32,31 @@ SysGet, isConsoleBool, 4096
 if (isConsoleBool == 0)
 	{
 		;IN TESTING, UNCOMMENT ALL OF THE LINES BELOW AT THIS INDENT LEVEL:
-		;MsgBox, 4, , isConsoleBool value is %isConsoleBool% [or, if this is executing as hoped, zero], which indicates that this script runs from a console session. It would be more difficult to execute this script otherwise, but there are ways . . . see the comments of testIfConsoleSession.ahk to read about one way. Continue this test (if you continue, this message will reappear in 17 seconds)?
-		;IfMsgBox No
+		;MsgBox, 4, , isConsoleBool value is %isConsoleBool% [or, if this is executing as hoped, zero], which indicates that this script runs from a console session. It would be more difficult to execute this script otherwise, but there are ways . . . see the comments of testifConsoleSession.ahk to read about one way. Continue this test (if you continue, this message will reappear in 17 seconds)?
+		;ifMsgBox No
 		;return
 
 	;==========REINITIALIZE wroteUsername bool check variable before check.
 	wroteUsername = 0
-	;==========CHECK WHETHER user.txt REPORTS THAT PROCESSES OF CONCERN WERE SPAWNED BY THE USER EXECUTING THIS SCRIPT, AND STORE THE RESULT IN A BOOLEAN, wroteUsername.
+	;==========CHECK WHETHER user.txt REPORTS THAT our exec. WERE SPAWNED BY THE USER EXECUTING THIS SCRIPT, AND STORE THE RESULT IN A BOOLEAN, wroteUsername.
 
 	FileReadLine, activeSessionUserName, %A_WorkingDir%\user.txt, 1
 	;SEE PROMINENTLY DEMARKED NOTE ON AUTOTRIM, NEAR THE BEGINNING OF THIS SCRIPT . . .
 	activeSessionUserName = %activeSessionUserName%
 		;MsgBox, line read from user.txt was %activeSessionUserName%
-		;Logically, the following IfEqual statement and conditional execution block could be deleted, and the else clause below it (with its conditional execution block) could be altered to use the same logical check as the IfEqual, but changing the IfEqual to IfNotEqual (if that function exists), however, it's nice to have the feedback of the case wherein I should do nothing, for debug purposes.
-	IfEqual, runUserName, %activeSessionUserName%
+		;Logically, the following ifEqual statement and conditional execution block could be deleted, and the else clause below it (with its conditional execution block) could be altered to use the same logical check as the ifEqual, but changing the ifEqual to ifNotEqual (if that function exists), however, it's nice to have the feedback of the case wherein I should do nothing, for debug purposes.
+	ifEqual, runUserName, %activeSessionUserName%
 		{
 			;MsgBox, 0, Previous run executed by active user, activeSessionUserName %activeSessionUserName% or purportedly the previous user to execute this program as recorded in user.txt is the same as runUserName %runUserName% the user who (now) executed this program. I should do nothing and therefore shall not do anything other than speak in oddly imperative terms . . . please dont fault the lack of punctuation in this its just that the message box will not work if its punctuated, 4
 		}
 		else
 		{
-			;MsgBox, 0, Previous run not executed by active user, activeSessionUserName %activeSessionUserName% or purportedly the previous user to execute this program as recorded in user.txt is NOT the same as runUserName %runUserName% the user who (now) executed this program. Killing and re-spawning processes of concern (as the currently active user (or the user in a console session--this block of execution is only reached *if* it is first verified that the user executing this program is in an active session--oy vay this explanation is too wordy!) as we want those processes to run under the current active user . . . I am about to terminate processes of concern (if they exist) . . . Im sorry this is unpuntuated its just that the message box will not work if its punctuated, 4
-		;If the following special controller process killer isn't used, controlling processes can double up under the same login. Ergo kill them before we now respawn them.
+			;MsgBox, 0, Previous run not executed by active user, activeSessionUserName %activeSessionUserName% or purportedly the previous user to execute this program as recorded in user.txt is NOT the same as runUserName %runUserName% the user who (now) executed this program. Killing and re-spawning our exec. (as the currently active user (or the user in a console session--this block of execution is only reached *if* it is first verified that the user executing this program is in an active session--oy vay this explanation is too wordy!) as we want those processes to run under the current active user . . . I am about to terminate our exec. (if they exist) . . . Im sorry this is unpuntuated its just that the message box will not work if its punctuated, 4
+		;if the following special controller process killer isn't used, controlling processes can double up under the same login. Ergo kill them before we now respawn them.
 		Run, %A_WorkingDir%\killControllerProcesses.exe, %A_WorkingDir%, hide UseErrorLevel, killSpawnsProcessID
 		Sleep, 1250
 		;Kill any/all processes spawned by the controller processes.
-		Run, %A_WorkingDir%\killSpawns.exe, %A_WorkingDir%, hide UseErrorLevel, killSpawnsProcessID
+		Run, %A_WorkingDir%\killCheck.exe, %A_WorkingDir%, hide UseErrorLevel, killCheckProcessID
 		Sleep, 7000
 		;MAYBE That can work well in less than than 7000 milliseconds (7 seconds)?
 		Run, %comspec% /k DEL %A_WorkingDir%\user.txt, %A_WorkingDir%, hide UseErrorLevel, writeUserTXTProcessID
