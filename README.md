@@ -35,6 +35,10 @@ Novacoin:		4Z123Y8QZXPVvfA7LVDySunJoEG2dnUHFV
 
 ==INSTALLATION AND USE==
 
+v0.9.0.2 NOTE: This README file has not yet been updated to reflect this new distribution. Also, for any previous install of this, the now outdated files in the root of the distribution should be deleted, and refreshed with the files in this distribution. Also, INSTALL.bat should be run again.
+
+==SETUP==
+
 Navigate to the /setup folder, launch an elavated (or *maybe* mereley administrative) command prompt thereto, and run INSTALL.bat. Follow the configuration details given here and see if it works. If it doesn't work, alter INSTALL.bat per the comments therein to try for a "USER" (instead of "SYSTEM") install. If that doesn't work either, cry, because you are not evil and/or lucky enough. Drop me a line and tell me your woes. I won't give you any pity, but at least you'll get to indulge in self-pity.
 
 A SYSTEM setup runs this toolset's processes in session 0, so they will spawn and terminate even when the computer is locked (because the lock screen is in session 0), but again only if the user is logged in (with thier session locked *or* unlocked). This is achieved via systemSpawn.exe, and the processes it launches. A USER setup accomplishes much the same, by instead launching spawn.exe at user login, but spawn.exe doesn't run in session 0, it runs in the user session, and therefore cannot respond to user activity when the computer is locked.
@@ -47,7 +51,7 @@ C:\farm\Local
 
 Lastly, be sure to write the image name (without the .exe extension) of each executable you wrote in the COMM~.txt files--write those image names in processSpawnList.txt, one image per line. See again the defaults provided therein for examples. NOTE: If you do not do this, these processes will not terminate upon user activity resuming from idle!
 
-To check whether your configuration will properly run, assuming it is a resource-hungry application (e.g. it uses a lot of CPU and/or GPU power), first run a resource monitor tool like Open Hardware Monitor, and then run runProc.exe, and see if hardware (for example CPU) activity spikes as a result. You should also see your custom configured process(es) running, or listed in, Windows Task Manager (you can get to that via CTRL+ALT+DEL).
+To check whether your configuration will properly run, assuming it is a resource-hungry application (e.g. it uses a lot of CPU and/or GPU power), first run a resource monitor tool like Open Hardware Monitor, and then run runProcesses.exe, and see if hardware (for example CPU) activity spikes as a result. You should also see your custom configured process(es) running, or listed in, Windows Task Manager (you can get to that via CTRL+ALT+DEL).
 
 NOTE: if you have logged off and then on after initial setup, killCheck.exe may be running, which if it is will very quickly terminate your processes, owing to your own user activity! To kill that process and also spawnCheck.exe, run killControlProcesses.exe, which terminates all the processes listed in controllerProcessList.txt.
 
@@ -72,8 +76,6 @@ http://retired.beyondlogic.org/consulting/processutil/processutil.htm
 
 ==TO DO:==
 
-URGENT BUGFIX: Instead of having spawn.exe (or) systemSpawn.exe launch both spawnCheck and killCheck, have spawnCheck periodically check for the existence of the killCheck process, suspend its own functionality if that process is not found, attempt to launch the process any time it is not found, and resume its own functionality when that process if found. (LONG-TERM OBJECTIVE, BETTER SOLUTION; wrap all this functionality into one program, so that multiple executables do not need to be managed (wherever possible). With my first try at that, I couldn't seem to get simultaneous timers (and dependent functions) running properly in different threads). Otherwise, if spawnCheck.exe runs alone, it can spawn processes while the user is active, which it *should not.*
-
 Add configurable CPU/GPU load check functionality, for example do not spawn processes if the CPU and/or GPU load (from other processes?) are over fifteen percent. Possibly see the source code for how Open Hardware Monitor checks loads as a start point for this.
 
 Option to self-nuke the entire farmComm directory and all its contents if a reference file's timestamp is more than X days old. (This reference file could for example be periodically refreshed remotely--from another computer--else the entire toolset self-destruct to no longer burden the computer.) See development in test/selfNuke-test.ahk (I already have a script that nukes a directory, not yet included).
@@ -89,6 +91,14 @@ Possibly many other things.
 =RELEASE HISTORY=
 
 In reverse chronological order:
+
+v0.9.0.2
+
+Done: "LONG-TERM OBJECTIVE, BETTER SOLUTION," re the below previous item in the TO DO list. Functionality of multiple executables rolled into one executable, farmComm.exe (exploiting AutoHotkey timer functionality, which I figured out better--see src\test\timerTest.ahk.) Left one process as its own executable though; runProcesses.exe: handy for manually running processes whenever you wish and/or as called via farmComm.exe.
+
+Unfortunately for anyone using this without admin privileges, the "USER" install described is at least temporarily suspended, because that uses a whole other branch of logic not-so-easy to either integrate into farmComm.exe or into a variant for that purpose. Double-unfortunately, the previous release intended for that purpose had a critical bug: if you want this function, you must either beg me or adapt the code yourself.
+
+	REFERENCE: URGENT BUGFIX: Instead of having spawn.exe (or) systemSpawn.exe launch both spawnCheck and killCheck, have spawnCheck periodically check for the existence of the killCheck process, suspend its own functionality if that process is not found, attempt to launch the process any time it is not found, and resume its own functionality when that process if found. (LONG-TERM OBJECTIVE, BETTER SOLUTION; wrap all this functionality into one program, so that multiple executables do not need to be managed (wherever possible). With my first try at that, I couldn't seem to get simultaneous timers (and dependent functions) running properly in different threads). Otherwise, if spawnCheck.exe runs alone, it can spawn processes while the user is active, which it *should not.*
 
 v0.9.0.1 bug fix
 
@@ -110,7 +120,7 @@ The icon file was created (or can be recreated) via the AHK script and image in 
 
 ==HOW IT WORKS==
 
-systemSpawn.exe, intended to launch at user logon, launches two processes, killCheck.exe and spawnCheck.exe, into the secure desktop as SYSTEM (this is accomplished through PaExec.exe). killCheck continuously checks if the user has been active in any three second period. If the user is active, it checks for and terminates any of the processes listed in processSpawnList.txt. spawnCheck continuously checks if the user has been idle for more than a time period (default is 8.5 minutes). If the user is idle, it calls runProc.exe, which reads launches the processes specified (and configurable) in localComm\COMM1.txt, COMM2.txt, and COMM3.txt. Thus, between killCheck and spawnCheck, the executables given in the COMM~.txt and ~list.txt will be executed at user idle, and terminated at user activity. (Note also that at first launch, systemSpawn calls killSpawns).
+systemSpawn.exe, intended to launch at user logon, launches two processes, killCheck.exe and spawnCheck.exe, into the secure desktop as SYSTEM (this is accomplished through PaExec.exe). killCheck continuously checks if the user has been active in any three second period. If the user is active, it checks for and terminates any of the processes listed in processSpawnList.txt. spawnCheck continuously checks if the user has been idle for more than a time period (default is 8.5 minutes). If the user is idle, it calls runProcesses.exe, which reads launches the processes specified (and configurable) in localComm\COMM1.txt, COMM2.txt, and COMM3.txt. Thus, between killCheck and spawnCheck, the executables given in the COMM~.txt and ~list.txt will be executed at user idle, and terminated at user activity. (Note also that at first launch, systemSpawn calls killSpawns).
 
 A USER install achieves the same by instead executing spawn.exe at user login. At first launch, spawn.exe writes the pseudo-username SecretNinja5603 to user.txt, and checks for and terminates any running processes listed in ~list.txt. Thereafter, it periodically checks if it is running in an active session, and also reads the username written in user.txt. At any time the name in user.txt does not match the username under which spawn.exe runs, it writes the username (of the user under which it runs) to user.txt, and launches killCheck and spawnCheck, which perform the work already described. user.txt therefore functions as a file that effectively says "This user last spawned the processes listed in \localComm\COMM1-3.txt, from an active session." Because it does this, if in its periodic checks of user.txt it finds a match (user.txt lists the same user who last spawned tasks), it can do nothing (and indeed in this condition it does nothing), and it therefore avoids duplicate spawns of the processes. On the other hand (as described), at any time it is "aware" that it is in an active session, and did not last spawn any processes, it will terminate those processes, and start the cycle over again to check for thier execution.
 

@@ -1,10 +1,7 @@
 SystemSpawn
 spawn
-spawnCheck
-killCheck
-killSpawns
-runProc
-nircmdc
+farmComm
+runProcesses
 AutoHotKey
 paexec
 minerd
@@ -13,6 +10,5 @@ bfgminer
 cgminer
 phoenix
 Werfault
-blade
 cmd
 conhost
