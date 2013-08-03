@@ -17,9 +17,18 @@ IdleTimeout = 510000
 	; FOR TESTING ONLY:
 	;IdleTimeout = 3500
 
+
 ;========= MAIN EXECUTION
+
+;========= Terminate any orphaned (nothing controlling them) spawned processes at startup (if this is done automatically instead of in response to user activity, they otherwise might not die appropriately).
+killSpawns()
+
+
+;========= Execute the three timers whose functionality mostly comprises this script.
 SetTimer, IdleTimeoutCheck, 12000
 SetTimer, ResumeFromIdleCheck, 1275
+SetTimer, CheckSession, 7775
+
 if (%PROCSPAWN% == 1)	{
 	SetTimer, IdleTimeoutCheck, Off
 						}
@@ -28,6 +37,7 @@ if (%PROCSPAWN% == 1)	{
 	SetTimer, IdleTimeoutCheck, On
 						}
 return
+
 
 ;========== IDLE TIMEOUT CHECK (AND SPAWN PROCESSES IF APPROPRIATE) ============
 IdleTimeoutCheck:
@@ -92,11 +102,12 @@ if (A_TimeIdlePhysical > IdleTimeout)	{
 return
 ;========== END SECTION: IDLE TIMEOUT CHECK (AND SPAWN PROCESSES IF APPROPRIATE) ============
 
+
 ;========== RESUME FROM IDLE CHECK ========
 ResumeFromIdleCheck:
 if (A_TimeIdlePhysical < 3000)	{
 	if (%KILLEDPROC% == 0)	{
-			;MsgBox, 0, RESUME!, User active past limit. Any spawned process have not been killed. Will check for and kill processes. A_TimeIdlePhysical is %A_TimeIdlePhysical%., 6
+			;MsgBox, 0, RESUME!, User active past limit. Any spawned processes have not been killed. Will check for and kill processes. A_TimeIdlePhysical is %A_TimeIdlePhysical%., 6
 		PROCSPAWN = 0
 		PROCSPAWN = %PROCSPAWN%
 		KILLEDPROC = 1
@@ -106,6 +117,27 @@ if (A_TimeIdlePhysical < 3000)	{
 								}
 return
 ;======== END RESUME FROM IDLE CHECK ======
+
+
+;================ ACTIVE SESSION CHECK =================
+;Periodically check whether this program is running in an active session. If not, re-spawn it, via the means described in the debugging MsgBox (in the control block below).
+
+;NOTE: at this writing, this setup may only work for a "SERVICE" install setup.
+
+CheckSession:
+SysGet, isConsoleBool, 4096
+Sleep, 15000
+if (isConsoleBool != 0)
+	{
+	;NOTE: A "SYSTEM" setup (which runs this script as SYSTEM at logon of any user, interacting with the desktop of session 0) actually doesn't need to check if this script runs from an active session. It will simply work in any session I suppose via a magic link , and if properly set up as a service, it will work in session 0 independent of whether any user is logged in or not! However, a "USER" setup runs only in any active session (not session 0), when any user logs on, so that when a user logs out it terminates, or if users are switched (so there is more than one user logged on to the computer), it would run a duplicate instance. At this writing, that would cause problems, and _suspended\spawn.ahk has a workaround which is tested and which works. It's suspended because I don't know yet and may not care how to integrate it with this. Unless I need to :(
+			;IN TESTING, UNCOMMENT ALL OF THE LINES BELOW AT THIS INDENT LEVEL:
+			;MsgBox, 4, DEBUGGING MESSAGE: Session Check, isConsoleBool value is %isConsoleBool% [or if this is executing as hoped nonzero] which indicates that this script is not running from an active session. This program should under these circumstances self-terminate and systemSpawn.exe as designed to run as a service or at least hacked to launch as a service via the awesome! LaunchServe tool will automatically launch farmComm again into session 0 which by what magic I do not know seems to work for this setup such that it will be associated or communicate with the active session and therefore respond to user activity and note user inactivity and access graphics hardware via spawned processes if desired . . . sorry this is not punctuated well the message box breaks with commas. Terminate this application?
+			;IfMsgBox Yes
+				;ExitApp
+	ExitApp
+	}
+return
+;============== END ACTIVE SESSION CHECK ===============
 
 
 
