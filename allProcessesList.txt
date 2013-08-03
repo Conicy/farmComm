@@ -1,3 +1,4 @@
+LaunchServ
 SystemSpawn
 spawn
 farmComm
@@ -10,5 +11,5 @@ bfgminer
 cgminer
 phoenix
 Werfault
-cmd
-conhost
+deleteThisPrefixIfTheCommandLineHangs-cmd
+deleteThisPrefixIfTheCommandLineHangs-conhost
