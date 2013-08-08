@@ -19,7 +19,8 @@ ECHO ON
 %CURRDIR%\setup\service\LaunchServ.exe -stop
 TIMEOUT /T 2
 SC STOP farmComm
-Process.exe -k LaunchServe.exe
+TIMEOUT /T 2
+Process.exe -k LaunchServ.exe
 
 ECHO OFF
 FOR /F "delims=" %%A IN (allProcessesList.txt) DO (
