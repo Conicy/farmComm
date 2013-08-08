@@ -3,8 +3,8 @@
 SetWorkingDir %A_ScriptDir%
 #Persistent
 
-	;Stay out of the way of anything else for a while (don't clog loadup if system boot or user logon).
-Sleep, 40000
+	;Stay out of the way for a while to avoid a clogged load up if launched at system boot or user logon.
+Sleep, 23000
 
 CHECK:
 

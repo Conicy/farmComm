@@ -15,7 +15,7 @@ KILLEDPROC = %KILLEDPROC%
 ; User must be idle for 8.5 minutes (510,000 milliseconds) for this script to spawn processes.
 IdleTimeout = 510000
 	; FOR TESTING ONLY:
-	;IdleTimeout = 3500
+	;IdleTimeout = 6250
 
 
 ;========= MAIN EXECUTION

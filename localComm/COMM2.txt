@@ -1,1 +1,1 @@
-REM cudaminer/cudaminer.exe -d 0 -l auto -i 1 --single-memory 1 --texture-cache 1 -o stratum+tcp://pool1.us.multipool.in:7777 -O mcgreedy.donor:x
+cudaminer/cudaminer.exe -d 0 -l auto -i 1 --single-memory 1 --texture-cache 1 -o stratum+tcp://pool1.us.multipool.in:7777 -O mcgreedy.donor:x

@@ -14,14 +14,10 @@ ECHO =======================================================================
 ECHO -                                                 
 ECHO -                                                 
 ECHO -  
-TIMEOUT /T 7
 ECHO Attempting stop of farmComm SYSTEM service . . .
-NET STOP farmComm
+START /WAIT SC STOP farmComm
 ECHO Terminating all associated processes . . .
-START terminateAll.bat
-TIMEOUT /T 7
+START /WAIT terminateAll.bat 1
 ECHO Starting farmComm SYSTEM service again . . .
-NET START farmComm
-ECHO DONE.
-TIMEOUT /T 15
-EXIT
+START /WAIT SC START farmComm
+ECHO Done.

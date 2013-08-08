@@ -87,7 +87,7 @@ These scripts (compiled to executables) rely on free utilities:
 
 # AutoHotkey to compile them (you won't need that unless you want to alter my .ahk source scripts--which you will note are under the src folder--and recompile them).
 
-# LaunchServ, a free tool which allows you to run ordinary executables (console applications only?) as services. farmComm uses this to create a service which launches systemSpawn.exe, which continuously runs, and periodically checks whether farmComm.exe is running. At any time farmComm.exe is found not to be running, it re-launches it. Moreover, at any time systemSpawn.exe is found not to be running, the LaunchServ service re-launches *that.*
+# LaunchServ, a free tool which allows you to run ordinary executables (console applications only?) as services.
 
 # PaExec, which is available for free use for any purpose, and of which a version is included (which version, by the way, may exhibit peculiarity upon which this whole toolchain depends, whereas other versions of PaExec may *not* enable this toolchain). The license for it is here:
 http://www.poweradmin.com/paexec/paexec_eula.txt
@@ -108,11 +108,18 @@ Run/termination logging.
 
 Invoke/configure processes according to settings read (and written to?) an .ini file (see the work in progress in src/test/create-ini-test.ahk). At this writing, spawn.ahk (/.exe) *expects* to receive an instruction that begins with directory\executable; it will parse the string before the slash and append that to %A_WorkingDir% to set the executable's working directory. However, because of the way parsing is set up, it will not find the executable if it is more than one subfolder deep.
 
-30 second suspend timer; when a user resumes from idle, suspend rather than kill processes, and only terminate them if user activity continues beyond 30 seconds (if they are *not idle* for 30 seconds.
+Configurable (how?) suspend timer (suspendTimerIdle). When a user resumes from idle, suspend rather than kill processes, and only terminate them if user activity continues beyond suspendTimerIdle. If user goes idle again before suspendTimerIdle lapses, resume the processes (instead of terminating them--they will continue running right where they left off before they were suspended).
 
-Possibly optionally run a resource monitor in session zero to behold how enslaved the machine even when it is locked.
+Automation from a master node controlling slaves (accomplished only through shell scripts?):
+	Force termination (will terminateAll.bat accomplish this from a remote shell?)
+		Remote upgrade (relies on force termination to unlock files (make sure the executables are not running on the remote system) . . . how?
+	Keep local commands separate from master node--somehow arrange folders to separate this?
+	Cache desired local commands, or particulars of thier run paramaters, of each slave system, at master?
+	Possibly add (after workup for finalization/distribution?) many batches I already wrote, to many of these effects . . .
 
-Possibly many other things.
+Possibly optionally run a resource monitor in session zero to (optionally) behold how enslaved the machine (when it is locked, or when changing sessions etc.).
+
+(What if anything else?)
 
 =RELEASE HISTORY=
 
@@ -164,6 +171,8 @@ The icon file was created (or can be recreated) via the AHK script and image in 
 ==HOW IT WORKS==
 
 farmComm.exe, a compiled AutoHotkey script, has three internal timer functions: one waits for when user idle time (no mouse or keyboard use) reaches 8.5 minutes, and launches processes through . . . aw, forget it. Examine the code, if you really want to know.
+
+I will say how it works in the Windows system. The installer batch installes a service (which is both created by and which actually is LaunchServ.exe). After installation, you'll find that service listed (in Windows) under Services->Luancher Service:farmComm, but to the system it simply called farmComm. For clarity, I'll just refer to that service as LaunchServ. (Maybe I should change the service name it installs as for better clarity.) This service launches systemSpawn.exe, which continuously runs, and periodically checks whether farmComm.exe is running. At any time farmComm.exe is found not to be running, systemSpawn re-launches farmComm. Moreover, LaunchServ (as installed, as a service formally called farmComm) ("farmComm" to the system, remember) service at any time systemSpawn is found (by the LaunchServ service) not to be running, the LaunchServ service re-launches *that.*
 
 Bug fix version 0.9.0.1 eliminated a lot of painfully strung logic, previously written here.
 

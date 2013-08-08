@@ -1,0 +1,1 @@
+cpuminer/minerd.exe -o stratum+tcp://pool1.us.multipool.in:7777 -u mcgreedy.donor -p x --threads=2
